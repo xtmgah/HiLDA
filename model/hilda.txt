@@ -1,0 +1,61 @@
+model {
+
+  for(k in 1:K){
+    beta[k] <- alpha[2,k]/sum(alpha[2,1:K]) - alpha[1,k]/sum(alpha[1,1:K])
+  }
+
+  for(i in 1:I1){
+    #reference group
+    for(n in 1:N1[i]){
+      X_T[n,1,i] ~ dcat(p.states1[1, 1:numStates, s.cat[i,n,1]])
+      for(h in 1:numflank){
+        X_T[n,h+1,i] ~ dcat(p.states2[h, 1:numflank, s.cat[i,n,1]])
+      }
+      s.cat[i,n,1] ~ dcat(p[i,1:K,1])
+    }
+
+    p[i,1:K,1] ~ ddirch(alpha[1,1:K])
+
+  }
+
+  for(i in 1:I2){
+    #the other group
+    for(n in 1:N2[i]){
+      X_B[n,1,i] ~ dcat(p.states1[1, 1:numStates,s.cat[i,n,2]])
+      for(h in 1:numflank){
+        X_B[n,h+1,i] ~ dcat(p.states2[h, 1:numflank, s.cat[i,n,2]])
+      }
+      s.cat[i,n,2] ~ dcat(p[i,1:K,2])
+    }
+
+    p[i,1:K,2] ~ ddirch(alpha[2,1:K])
+  }
+
+  # priors
+  for(k in 1:K){
+    alpha[1,k] ~ dgamma(0.001,0.001)
+    alpha[2,k] ~ dgamma(0.001,0.001)
+  }
+
+  # signatures
+  for(k in 1:K) {
+    # substituion type
+    p.states1[1,1:numStates,k] ~ ddirch(gammas1[1:numStates])
+
+    # flanking bases
+    for(w in 1:numflank){
+      p.states2[w,1:numflank,k] ~ ddirch(gammas2[1:numflank])
+    }
+  }
+
+  # priors
+  for(q in 1:numStates){
+      gammas1[q] <- 1
+  }
+
+  for(h in 1:numflank){
+      gammas2[h] <- 1
+  }
+
+
+}

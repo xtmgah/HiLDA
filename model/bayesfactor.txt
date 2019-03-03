@@ -32,10 +32,19 @@ model {
   }
 
   # priors
-  for(k in 1:K){
-    alpha[1,k] ~ dgamma(0.001,0.001)T(0.05,)
-    alpha[2,k] ~ dgamma(0.001,0.001)T(0.05,)
+   alpha[1,1:K] <- gamma[1]*mu[1,1:K]
+  alpha[2,1:K] <- gamma[2]*mu[M,1:K]
+
+  mu[1,1:K] ~ ddirch(a[1:K])
+  mu[2,1:K] ~ ddirch(a[1:K])
+
+  for(k in 1:K) {
+    a[k] <- 1
   }
+
+  gamma[1] ~ dgamma(0.001,0.001)
+  gamma[2] ~ dgamma(0.001,0.001)
+
 
   # signatures
   for(k in 1:K) {
@@ -57,5 +66,9 @@ model {
       gammas2[h] <- 1
   }
 
-
+  # model indicator
+  M ~ dcat(p[])
+  p[1] <- prob1
+  p[2] <- 1-p[1]
+  pM2 <- step(M - 1.5)
 }

@@ -203,12 +203,91 @@ hilda.inits <- function(inputParam = Param, refGroup, sigOrder = NULL , ...) {
 }
 
 
+#' Apply HiLDA to statistically testing the global difference in burdens of mutation signatures between two groups
+#'
+#' @param inputG a MutationFeatureData S4 class output by the pmsignature.
+#' @param inputParam a EstimatedParameters S4 class output by the pmsignature.
+#' @param refGroup the indice indicating the samples in the reference group.
+#' @param sigOrder the order of the mutational signatures.
+#' @param n.iter number of total iterations per chain (default: 2000).
+#' @param n.burnin length of burn (default: 0).
+#' @param prob_M1 the probability of sampling the model 1 (no difference in the means)
+#'
+#'
+#' @importFrom R2jags jags
+#' @export
+
+
+hilda.bayesfactor <- function(inputG = G, inputParam = Param, refGroup, sigOrder = NULL,
+                       n.iter = 2000, n.burnin = 0, prob_M1 = 0.5, ...) {
+    n.sig <- inputParam@signatureNum
+
+    if(is.null(sigOrder)){
+        sigOrder <- 1:n.sig
+    }
+
+    # reshape the counts of input data
+    countwide <- as.data.frame(t(inputG@countData))
+    colnames(countwide) <- c("type", "sample", "count")
+    countlong <- reshape(countwide, idvar = "sample", timevar = "type", direction = "wide")
+    countlong <- countlong[order(countlong[, 1]), ]
+    countlong[is.na(countlong)] <- 0
+    countlong <- countlong[, -1]
+
+    # generate the known data for MCMC
+    Num1 <- length(refGroup)
+    Num2 <- length(inputG@sampleList) - Num1
+    rownames(countlong) <- 1:(Num1 + Num2)
+    mutationN <- as.vector(rowSums(countlong))
+    caseGroup <- setdiff(1:(Num1 + Num2), refGroup)
+    numBases <- length(inputG@possibleFeatures)
+
+    X_G1 <- structure(.Data = rep(0, Num1 * max(mutationN[refGroup]) * numBases),
+                      .Dim = c(max(mutationN[refGroup]), numBases, Num1))
+    X_G2 <- structure(.Data = rep(0, Num2 * max(mutationN[caseGroup]) * numBases),
+                      .Dim = c(max(mutationN[caseGroup]), numBases, Num2))
+
+    for (i in refGroup) {
+        X_G1[1:sum(countlong[i, ]), , which(refGroup == i)] <- t(inputG@featureVectorList[,
+                                                                                          rep(1:ncol(inputG@featureVectorList), countlong[i, ])])
+    }
+
+    for (i in caseGroup) {
+        X_G2[1:sum(countlong[i, ]), , which(caseGroup == i)] <- t(inputG@featureVectorList[,
+                                                                                           rep(1:ncol(inputG@featureVectorList), countlong[i, ])])
+    }
+
+    # set up the MCMC
+    N1 <- mutationN[refGroup]
+    N2 <- mutationN[caseGroup]
+
+    jdata <- list(I1 = Num1, I2 = Num2,
+                  K = n.sig, numStates = 6,
+                  numflank = numBases - 1,
+                  N1 = N1, N2 = N2,
+                  X_T = X_G1, X_B = X_G2, prob1 = prob_M1)
+
+    inits <- hilda.inits(inputParam, refGroup, c(2,3,1))
+
+    var.s <- c("p.states1", "p.states2", "p", "alpha", "beta")
+
+    modelFile <- system.file("model/bayesfactor.txt", package = "HiLDA")
+
+    model.fit<-R2jags::jags(model.file = modelFile,
+                            data = jdata, parameters.to.save = var.s, inits = inits,
+                            n.chains = 2, n.iter = n.iter, n.burnin = n.burnin)
+
+    return(model.fit)
+}
+
 #' Apply HiLDA to statistically testing the burdens of mutation signatures between two groups
 #'
-#' @param input a MutationFeatureData S4 class output by the pmsignature.
-#' @param refGroup the indice indicating the samples in the reference group.
-#' @param numBases the number of flanking bases around the mutated position.
-#' @param numSig the number of mutation signatures.
+#' @param inputG a MutationFeatureData S4 class output by the pmsignature.
+#' @param inputParam a EstimatedParameters S4 class output by the pmsignature.
+#' @param refGroup the reference group
+#' @param sigOrder the indice indicating the samples in the reference group.
+#' @param n.iter number of total iterations per chain (default: 2000).
+#' @param n.burnin length of burn (default: 0).
 #'
 #'
 #' @importFrom R2jags jags
@@ -264,7 +343,7 @@ hilda.test <- function(inputG = G, inputParam = Param, refGroup, sigOrder = NULL
                   N1 = N1, N2 = N2,
                   X_T = X_G1, X_B = X_G2)
 
-    inits <- hilda.inits(inputParam, refGroup, c(2,3,1))
+    inits <- hilda.inits(inputParam, refGroup, sigOrder)
 
     var.s <- c("p.states1", "p.states2", "p", "alpha", "beta")
 
@@ -272,7 +351,7 @@ hilda.test <- function(inputG = G, inputParam = Param, refGroup, sigOrder = NULL
 
     model.fit<-R2jags::jags(model.file = modelFile,
                             data = jdata, parameters.to.save = var.s, inits = inits,
-                            n.chains = 2, n.iter = n.iter, n.burnin = n.burnin, jags.seed = 123)
+                            n.chains = 2, n.iter = n.iter, n.burnin = n.burnin)
 
     return(model.fit)
 }

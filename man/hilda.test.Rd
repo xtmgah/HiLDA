@@ -8,13 +8,17 @@ hilda.test(inputG = G, inputParam = Param, refGroup, sigOrder = NULL,
   n.iter = 2000, n.burnin = 0, ...)
 }
 \arguments{
-\item{refGroup}{the indice indicating the samples in the reference group.}
+\item{inputG}{a MutationFeatureData S4 class output by the pmsignature.}
 
-\item{input}{a MutationFeatureData S4 class output by the pmsignature.}
+\item{inputParam}{a EstimatedParameters S4 class output by the pmsignature.}
 
-\item{numBases}{the number of flanking bases around the mutated position.}
+\item{refGroup}{the reference group}
 
-\item{numSig}{the number of mutation signatures.}
+\item{sigOrder}{the indice indicating the samples in the reference group.}
+
+\item{n.iter}{number of total iterations per chain (default: 2000).}
+
+\item{n.burnin}{length of burn (default: 0).}
 }
 \description{
 Apply HiLDA to statistically testing the burdens of mutation signatures between two groups

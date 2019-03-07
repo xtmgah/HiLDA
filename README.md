@@ -86,6 +86,11 @@ hilda_rhat(hilda_local)
 
 # Output the posterior distribution of the mean difference
 ```r
+hilda_bayesfactor_result(hilda_gloabl)
+```
+
+# Output the posterior distribution of the mean difference
+```r
 hilda_posterior(hilda_local)
 ```
 

@@ -57,6 +57,7 @@ Here, *inputFile* is the path for the input file. *numBases* is the number of fl
 ```r
 library(HiLDA)
 inputFile <- system.file("data/sampleG.rdata", package = "HiLDA")
+load(inputFile)
 ```
 
 # Get signatures
@@ -74,8 +75,8 @@ hilda_plotSignature(Param)
 
 # Generate the initial values and run the global test (Bayes Factor) and the local test 
 ```r
-hilda_gloabl <- hilda_bayesfactor(G, Param, refGroup = seq(1,20,2), n.iter = 2000)
-hilda_local <- hilda_test(G, Param, refGroup = seq(1,20,2), n.iter = 2000)
+hilda_gloabl <- hilda_bayesfactor(inputG = G, inputParam = Param, refGroup = seq(1,20,2), n.iter = 2000)
+hilda_local <- hilda_test(inputG = G, inputParam = Param, refGroup = seq(1,20,2), n.iter = 2000)
 ```
 
 # Assess Convergence of MCMC chains

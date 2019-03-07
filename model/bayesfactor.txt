@@ -32,7 +32,7 @@ model {
   }
 
   # priors
-   alpha[1,1:K] <- gamma[1]*mu[1,1:K]
+  alpha[1,1:K] <- gamma[1]*mu[1,1:K]
   alpha[2,1:K] <- gamma[2]*mu[M,1:K]
 
   mu[1,1:K] ~ ddirch(a[1:K])
@@ -67,8 +67,8 @@ model {
   }
 
   # model indicator
-  M ~ dcat(p[])
-  p[1] <- prob1
-  p[2] <- 1-p[1]
+  M ~ dcat(prob[])
+  prob[1] <- prob1
+  prob[2] <- 1-prob[1]
   pM2 <- step(M - 1.5)
 }

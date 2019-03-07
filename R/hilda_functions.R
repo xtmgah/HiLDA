@@ -133,7 +133,7 @@ visPMS <- function(vF, numBases, baseCol = NA, trDir, charSize = 1.2, scale = TR
 #' @importFrom ggplot2 ggplot
 #' @export
 
-hilda.plotSignature <- function(inputParam) {
+hilda_plotSignature <- function(inputParam) {
 
 
     par(mar = c(0, 0, 0, 0))
@@ -169,7 +169,7 @@ hilda.plotSignature <- function(inputParam) {
 #'
 
 
-hilda.inits <- function(inputParam = Param, refGroup, sigOrder = NULL , ...) {
+hilda_inits <- function(inputParam = Param, refGroup, sigOrder = NULL , ...) {
 
     n.sig <- inputParam@signatureNum
 
@@ -218,7 +218,7 @@ hilda.inits <- function(inputParam = Param, refGroup, sigOrder = NULL , ...) {
 #' @export
 
 
-hilda.bayesfactor <- function(inputG = G, inputParam = Param, refGroup, sigOrder = NULL,
+hilda_bayesfactor <- function(inputG = G, inputParam = Param, refGroup, sigOrder = NULL,
                        n.iter = 2000, n.burnin = 0, prob_M1 = 0.5, ...) {
     n.sig <- inputParam@signatureNum
 
@@ -294,7 +294,7 @@ hilda.bayesfactor <- function(inputG = G, inputParam = Param, refGroup, sigOrder
 #' @export
 
 
-hilda.test <- function(inputG = G, inputParam = Param, refGroup, sigOrder = NULL,
+hilda_test <- function(inputG = G, inputParam = Param, refGroup, sigOrder = NULL,
                        n.iter = 2000, n.burnin = 0, ...) {
     n.sig <- inputParam@signatureNum
 
@@ -364,7 +364,7 @@ hilda.test <- function(inputG = G, inputParam = Param, refGroup, sigOrder = NULL
 #' @export
 #
 
-hilda.rhat <- function(jags.output) max(jags.output$BUGSoutput$summary[, "Rhat"])
+hilda_rhat <- function(jags.output) max(jags.output$BUGSoutput$summary[, "Rhat"])
 
 
 #' Extract the posterior distributions of the mean differences in muational exposures
@@ -375,7 +375,7 @@ hilda.rhat <- function(jags.output) max(jags.output$BUGSoutput$summary[, "Rhat"]
 #' @export
 #
 
-hilda.posterior <- function(jags.output){
+hilda_posterior <- function(jags.output){
     rownames <- rownames(jags.output$BUGSoutput$summary)
     beta.index <- stringr::str_detect(rownames, "beta")
     return(jags.output$BUGSoutput$summary[beta.index, ])

@@ -75,7 +75,7 @@ hilda_plotSignature(Param)
 
 ## Generate the initial values and run the global test (Bayes Factor) and the local test 
 ```r
-hilda_gloabl <- hilda_bayesfactor(inputG = G, inputParam = Param, refGroup = seq(1,20,2), n.iter = 2000)
+hilda_global <- hilda_bayesfactor(inputG = G, inputParam = Param, refGroup = seq(1,20,2), n.iter = 2000)
 hilda_local <- hilda_test(inputG = G, inputParam = Param, refGroup = seq(1,20,2), n.iter = 2000)
 ```
 
@@ -91,7 +91,7 @@ hilda_posterior(hilda_local)
 
 ## Output the posterior distribution of the mean difference
 ```r
-hilda_bayesfactor_result(hilda_gloabl)
+hilda_bayesfactor_result(hilda_global)
 ```
 
 

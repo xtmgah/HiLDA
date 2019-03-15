@@ -193,13 +193,17 @@ hilda_inits <- function(inputParam = Param, refGroup, sigOrder = NULL, ...) {
     n.flanking <- inputParam@flankingBasesNum - 1
     n.feature <- inputParam@flankingBasesNum
 
-    mat.alpha <- rbind(sirt::dirichlet.mle(fraction[refGroup, ])$alpha, sirt::dirichlet.mle(fraction[caseGroup,
-        ])$alpha)
+    mat.alpha <- rbind(sirt::dirichlet.mle(fraction[refGroup, ])$alpha,
+                       sirt::dirichlet.mle(fraction[caseGroup,])$alpha)
 
-    inits <- list(list(p.states1 = array(sig[1, , sigOrder], dim = c(1, 6, n.sig)), p.states2 = array(sig[2:n.feature,
-        1:4, sigOrder], dim = c(n.flanking, 4, n.sig)), alpha = mat.alpha), list(p.states1 = array(sig[1,
-        , sigOrder], dim = c(1, 6, n.sig)), p.states2 = array(sig[2:n.feature, 1:4, sigOrder],
-        dim = c(n.flanking, 4, n.sig)), alpha = mat.alpha))
+    inits <- list(list(p.states1 = array(sig[1, , sigOrder],
+                                         dim = c(1, 6, n.sig)),
+                       p.states2 = array(sig[2:n.feature, 1:4, sigOrder],
+                                         dim = c(n.flanking, 4, n.sig)), alpha = mat.alpha),
+                  list(p.states1 = array(sig[1, , sigOrder],
+                                         dim = c(1, 6, n.sig)),
+                       p.states2 = array(sig[2:n.feature, 1:4, sigOrder],
+                                         dim = c(n.flanking, 4, n.sig)), alpha = mat.alpha))
 
     return(inits)
 }
@@ -244,19 +248,19 @@ hilda_bayesfactor <- function(inputG = G, inputParam = Param, refGroup, sigOrder
     caseGroup <- setdiff(1:(Num1 + Num2), refGroup)
     numBases <- length(inputG@possibleFeatures)
 
-    X_G1 <- structure(.Data = rep(0, Num1 * max(mutationN[refGroup]) * numBases), .Dim = c(max(mutationN[refGroup]),
-        numBases, Num1))
-    X_G2 <- structure(.Data = rep(0, Num2 * max(mutationN[caseGroup]) * numBases), .Dim = c(max(mutationN[caseGroup]),
-        numBases, Num2))
+    X_G1 <- structure(.Data = rep(0, Num1 * max(mutationN[refGroup]) * numBases),
+                      .Dim = c(max(mutationN[refGroup]), numBases, Num1))
+    X_G2 <- structure(.Data = rep(0, Num2 * max(mutationN[caseGroup]) * numBases),
+                      .Dim = c(max(mutationN[caseGroup]), numBases, Num2))
 
     for (i in refGroup) {
         X_G1[1:sum(countlong[i, ]), , which(refGroup == i)] <- t(inputG@featureVectorList[, rep(1:ncol(inputG@featureVectorList),
-            countlong[i, ])])
+                                                                                                countlong[i, ])])
     }
 
     for (i in caseGroup) {
-        X_G2[1:sum(countlong[i, ]), , which(caseGroup == i)] <- t(inputG@featureVectorList[,
-            rep(1:ncol(inputG@featureVectorList), countlong[i, ])])
+        X_G2[1:sum(countlong[i, ]), , which(caseGroup == i)] <- t(inputG@featureVectorList[,rep(1:ncol(inputG@featureVectorList),
+                                                                                                countlong[i, ])])
     }
 
     # set up the MCMC
@@ -270,8 +274,9 @@ hilda_bayesfactor <- function(inputG = G, inputParam = Param, refGroup, sigOrder
 
     var.s <- c("p.states1", "p.states2", "pM2", "alpha", "beta")
 
-    model.fit <- R2jags::jags(model.file = system.file("models/bayesfactor.txt", package = "HiLDA"), data = jdata, parameters.to.save = var.s,
-        n.chains = 2, n.iter = n.iter, n.burnin = n.burnin)
+    model.fit <- R2jags::jags(model.file = system.file("models/bayesfactor.txt", package = "HiLDA"),
+                              data = jdata, parameters.to.save = var.s, n.chains = 2,
+                              n.iter = n.iter, n.burnin = n.burnin)
 
     return(model.fit)
 }
@@ -314,19 +319,17 @@ hilda_test <- function(inputG = G, inputParam = Param, refGroup, sigOrder = NULL
     caseGroup <- setdiff(1:(Num1 + Num2), refGroup)
     numBases <- length(inputG@possibleFeatures)
 
-    X_G1 <- structure(.Data = rep(0, Num1 * max(mutationN[refGroup]) * numBases), .Dim = c(max(mutationN[refGroup]),
-        numBases, Num1))
-    X_G2 <- structure(.Data = rep(0, Num2 * max(mutationN[caseGroup]) * numBases), .Dim = c(max(mutationN[caseGroup]),
-        numBases, Num2))
+    X_G1 <- structure(.Data = rep(0, Num1 * max(mutationN[refGroup]) * numBases),
+                      .Dim = c(max(mutationN[refGroup]), numBases, Num1))
+    X_G2 <- structure(.Data = rep(0, Num2 * max(mutationN[caseGroup]) * numBases),
+                      .Dim = c(max(mutationN[caseGroup]), numBases, Num2))
 
     for (i in refGroup) {
-        X_G1[1:sum(countlong[i, ]), , which(refGroup == i)] <- t(inputG@featureVectorList[, rep(1:ncol(inputG@featureVectorList),
-            countlong[i, ])])
+        X_G1[1:sum(countlong[i, ]), , which(refGroup == i)] <- t(inputG@featureVectorList[, rep(1:ncol(inputG@featureVectorList), countlong[i, ])])
     }
 
     for (i in caseGroup) {
-        X_G2[1:sum(countlong[i, ]), , which(caseGroup == i)] <- t(inputG@featureVectorList[,
-            rep(1:ncol(inputG@featureVectorList), countlong[i, ])])
+        X_G2[1:sum(countlong[i, ]), , which(caseGroup == i)] <- t(inputG@featureVectorList[,rep(1:ncol(inputG@featureVectorList), countlong[i, ])])
     }
 
     # set up the MCMC
@@ -340,8 +343,9 @@ hilda_test <- function(inputG = G, inputParam = Param, refGroup, sigOrder = NULL
 
     var.s <- c("p.states1", "p.states2", "p", "alpha", "beta")
 
-    model.fit <- R2jags::jags(model.file = system.file("models/hilda.txt", package = "HiLDA"), data = jdata, parameters.to.save = var.s,
-        inits = inits, n.chains = 2, n.iter = n.iter, n.burnin = n.burnin)
+    model.fit <- R2jags::jags(model.file = system.file("models/hilda.txt", package = "HiLDA"),
+                              data = jdata, parameters.to.save = var.s, inits = inits,
+                              n.chains = 2, n.iter = n.iter, n.burnin = n.burnin)
 
     return(model.fit)
 }

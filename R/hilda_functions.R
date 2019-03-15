@@ -181,8 +181,8 @@ hilda_inits <- function(inputParam = Param, refGroup, sigOrder = NULL, ...) {
         sigOrder <- 1:n.sig
     }
 
-    sig <- abind::abind(lapply(sigOrder, function(x) inputParam@signatureFeatureDistribution[x,
-        , ]), along = 3)
+    sig <- abind::abind(lapply(sigOrder,
+                               function(x) inputParam@signatureFeatureDistribution[x, , ]), along = 3)
     sampleNum <- length(inputParam@sampleList)
     fraction <- inputParam@sampleSignatureDistribution[, sigOrder]
     fraction[which(fraction == 0)] <- min(fraction[which(fraction > 0)]) * 0.01

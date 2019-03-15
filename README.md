@@ -59,7 +59,7 @@ Here, *inputFile* is the path for the input file. *numBases* is the number of fl
 
 ```r
 library(HiLDA)
-inputFile <- system.file("inst/sampleG.rdata", package = "HiLDA")
+inputFile <- system.file("sample/sampleG.rdata", package = "HiLDA")
 load(inputFile)
 ```
 

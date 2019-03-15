@@ -270,7 +270,7 @@ hilda_bayesfactor <- function(inputG = G, inputParam = Param, refGroup, sigOrder
 
     var.s <- c("p.states1", "p.states2", "pM2", "alpha", "beta")
 
-    model.fit <- R2jags::jags(model.file = "inst/bayesfactor.txt", data = jdata, parameters.to.save = var.s,
+    model.fit <- R2jags::jags(model.file = "models/bayesfactor.txt", data = jdata, parameters.to.save = var.s,
         n.chains = 2, n.iter = n.iter, n.burnin = n.burnin)
 
     return(model.fit)
@@ -340,7 +340,7 @@ hilda_test <- function(inputG = G, inputParam = Param, refGroup, sigOrder = NULL
 
     var.s <- c("p.states1", "p.states2", "p", "alpha", "beta")
 
-    model.fit <- R2jags::jags(model.file = "inst/hilda.txt", data = jdata, parameters.to.save = var.s,
+    model.fit <- R2jags::jags(model.file = "models/hilda.txt", data = jdata, parameters.to.save = var.s,
         inits = inits, n.chains = 2, n.iter = n.iter, n.burnin = n.burnin)
 
     return(model.fit)

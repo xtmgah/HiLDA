@@ -40,6 +40,9 @@ sample3	chr3	400	T	C
 ### Install the packages
 First, a few R packages such as `pmsignature`, `gtools`, `R2jags` have to be installed prior to using `HiLDA`. Currently, the easiest way for installing pmsignature is to use the package devtools. 
 
+`install_github("USCbiostats/HiLDA")`
+
+
 ### Install `JAGS`
 Download and install JAGS by following the instructions from http://mcmc-jags.sourceforge.net/
 

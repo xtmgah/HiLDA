@@ -14,3 +14,4 @@ Suggests:
     rmarkdown,
     testthat
 VignetteBuilder: knitr
+Remotes: friend1ws/pmsignature

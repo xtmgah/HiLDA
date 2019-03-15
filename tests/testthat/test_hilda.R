@@ -1,5 +1,5 @@
 test_that("correctly load the test data", {
-  inputFile <- system.file("data/sampleG.rdata", package = "HiLDA")
+  inputFile <- system.file("sample/sampleG.rdata", package = "HiLDA")
   load(inputFile)
 
   expect_equal(as.character(class(G)), "MutationFeatureData")
@@ -10,7 +10,7 @@ test_that("correctly load the test data", {
 
 
 test_that("running the global test and the local test", {
-  inputFile <- system.file("data/sampleG.rdata", package = "HiLDA")
+  inputFile <- system.file("sample/sampleG.rdata", package = "HiLDA")
   load(inputFile)
   K <- 3
   Param <- pmsignature::getPMSignature(G, K = K)

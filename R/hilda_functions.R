@@ -274,8 +274,17 @@ hilda_bayesfactor <- function(inputG = G, inputParam = Param, refGroup, sigOrder
 
     var.s <- c("p.states1", "p.states2", "pM2", "alpha", "beta")
 
+    sig <- abind::abind(lapply(sigOrder, function(x) inputParam@signatureFeatureDistribution[x, , ]), along = 3)
+    n.flanking <- inputParam@flankingBasesNum - 1
+    n.feature <- inputParam@flankingBasesNum
+
+    inits <- list(list(p.states1 = array(sig[1, , sigOrder], dim = c(1, 6, n.sig)),
+                       p.states2 = array(sig[2:n.feature, 1:4, sigOrder], dim = c(n.flanking, 4, n.sig))),
+                  list(p.states1 = array(sig[1,, sigOrder], dim = c(1, 6, n.sig)),
+                       p.states2 = array(sig[2:n.feature, 1:4, sigOrder], dim = c(n.flanking, 4, n.sig))))
+
     model.fit <- R2jags::jags(model.file = system.file("models/bayesfactor.txt", package = "HiLDA"),
-                              data = jdata, parameters.to.save = var.s, n.chains = 2,
+                              data = jdata, parameters.to.save = var.s, n.chains = 2, inits = inits,
                               n.iter = n.iter, n.burnin = n.burnin)
 
     return(model.fit)
@@ -342,6 +351,17 @@ hilda_test <- function(inputG = G, inputParam = Param, refGroup, sigOrder = NULL
     inits <- hilda_inits(inputParam, refGroup, sigOrder)
 
     var.s <- c("p.states1", "p.states2", "p", "alpha", "beta")
+
+    # initial values for signatures
+    sig <- abind::abind(lapply(sigOrder, function(x) inputParam@signatureFeatureDistribution[x, , ]), along = 3)
+    n.flanking <- inputParam@flankingBasesNum - 1
+    n.feature <- inputParam@flankingBasesNum
+
+    inits <- list(list(p.states1 = array(sig[1, , sigOrder], dim = c(1, 6, n.sig)),
+                       p.states2 = array(sig[2:n.feature, 1:4, sigOrder], dim = c(n.flanking, 4, n.sig))),
+                  list(p.states1 = array(sig[1,, sigOrder], dim = c(1, 6, n.sig)),
+                       p.states2 = array(sig[2:n.feature, 1:4, sigOrder], dim = c(n.flanking, 4, n.sig))))
+
 
     model.fit <- R2jags::jags(model.file = system.file("models/hilda.txt", package = "HiLDA"),
                               data = jdata, parameters.to.save = var.s, inits = inits,

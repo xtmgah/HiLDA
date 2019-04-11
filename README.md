@@ -9,6 +9,8 @@ The R package `HiLDA` is developed under the Bayesian framework to allow statist
 
 - Shiraishi et al. A simple model-based approach to inferring and visualizing cancer mutation signatures, bioRxiv, doi: [http://dx.doi.org/10.1101/019901](http://dx.doi.org/10.1101/019901).
 
+- **Zhi Yang**, Priyatama Pandey, Darryl Shibata, David V. Conti, Paul Marjoram, Kimberly D. Siegmund. HiLDA: a statistical approach to investigate differences in mutational signatures, bioRxiv, doi: https://doi.org/10.1101/577452 
+
 ## Input data
 
 `HiLDA` is a package built on some basic functions from `pmsignature` including how to read the input data. Here is an example from `pmsignature` on the input data, *mutation features* are elements used for categorizing mutations such as: 
